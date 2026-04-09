@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Itachi Uchiha — The Shadow of the Leaf</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blood: #8b0000;
+    --crimson: #cc0000;
+    --ember: #ff3300;
+    --gold: #c9a84c;
+    --ash: #1a1a1a;
+    --void: #050505;
+    --fog: #2a1a1a;
+    --bone: #e8d5b7;
+    --mist: rgba(139,0,0,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #020000;
+    color: var(--bone);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ======= CUSTOM CURSOR ======= */
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--crimson);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px var(--crimson), 0 0 20px var(--crimson);
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(204,0,0,0.6);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease;
+  }
+
+  /* ======= SHARINGAN CANVAS BG ======= */
+  #sharingan-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  /* ======= CROW CANVAS ======= */
+  #crow-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ======= PARTICLES ======= */
+  #particle-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* ======= CONTENT WRAPPER ======= */
+  .site-content {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* ======= NAV ======= */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 18px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(3,0,0,0.97), rgba(3,0,0,0.6), transparent);
+    border-bottom: 1px solid rgba(139,0,0,0.15);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .nav-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1rem;
+    color: var(--crimson);
+    letter-spacing: 6px;
+    text-shadow: 0 0 20px var(--crimson);
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 44px;
+    list-style: none;
+    align-items: center;
+  }
+  .nav-links a {
+    font-family: 'Courier New', 'Courier', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: rgba(232,213,183,0.45);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s, text-shadow 0.3s, letter-spacing 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--crimson);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 6px var(--crimson);
+  }
+  .nav-links a:hover {
+    color: var(--bone);
+    letter-spacing: 5px;
+    text-shadow: none;
+  }
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  /* ======= HERO ======= */
+  #hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-gradient {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(100,0,0,0.55) 0%, rgba(2,0,0,0) 70%);
+  }
+
+  /* Animated sharingan in hero */
+  .hero-sharingan {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    opacity: 0.12;
+    animation: spin-slow 40s linear infinite;
+  }
+
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+
+  .hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 8px;
+    color: var(--crimson);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(3.5rem, 10vw, 9rem);
+    font-weight: 900;
+    line-height: 0.9;
+    color: transparent;
+    background: linear-gradient(180deg, #fff 0%, var(--bone) 40%, var(--gold) 70%, var(--crimson) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: none;
+    letter-spacing: -2px;
+    opacity: 0;
+    animation: fadeUp 1.2s 0.8s forwards;
+    filter: drop-shadow(0 0 40px rgba(139,0,0,0.5));
+  }
+
+  .hero-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.7rem, 2vw, 1.1rem);
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 20px;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+
+  .hero-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: rgba(232,213,183,0.5);
+    margin-top: 30px;
+    max-width: 600px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 1s 1.6s forwards;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeUp 1s 2.2s forwards;
+  }
+  .hero-scroll span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 4px;
+    color: rgba(232,213,183,0.3);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(139,0,0,0.8), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ======= SECTION BASE ======= */
+  section {
+    padding: 120px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 6px;
+    color: var(--crimson);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 60px;
+    background: linear-gradient(135deg, var(--bone) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ======= DIVIDER ======= */
+  .blood-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--crimson), transparent);
+    margin: 0;
+    position: relative;
+  }
+  .blood-divider::after {
+    content: '卍';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--crimson);
+    font-size: 1.2rem;
+    background: var(--void);
+    padding: 0 16px;
+    text-shadow: 0 0 20px var(--crimson);
+  }
+
+  /* ======= ABOUT ======= */
+  #about {
+    background: linear-gradient(180deg, rgba(2,0,0,0.82) 0%, rgba(13,5,5,0.82) 100%);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .about-image-wrap {
+    position: relative;
+  }
+
+  .about-image-frame {
+    position: relative;
+    padding: 3px;
+    background: linear-gradient(135deg, var(--crimson), var(--gold), var(--crimson));
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  }
+
+  .about-image-inner {
+    background: var(--ash);
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .itachi-portrait {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    object-position: top center;
+    filter: sepia(20%) contrast(1.1) brightness(0.9);
+    transition: transform 0.6s ease, filter 0.6s ease;
+  }
+
+  .about-image-frame:hover .itachi-portrait {
+    transform: scale(1.04);
+    filter: sepia(0%) contrast(1.15) brightness(1);
+  }
+
+  .about-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(5,5,5,0.6) 0%, transparent 60%);
+  }
+
+  .about-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-color: var(--crimson);
+    border-style: solid;
+    opacity: 0.8;
+  }
+  .about-corner.tl { top: -10px; left: -10px; border-width: 2px 0 0 2px; }
+  .about-corner.tr { top: -10px; right: -10px; border-width: 2px 2px 0 0; }
+  .about-corner.bl { bottom: -10px; left: -10px; border-width: 0 0 2px 2px; }
+  .about-corner.br { bottom: -10px; right: -10px; border-width: 0 2px 2px 0; }
+
+  .about-text p {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: rgba(232,213,183,0.8);
+    margin-bottom: 24px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .stat-card {
+    background: rgba(139,0,0,0.1);
+    border: 1px solid rgba(139,0,0,0.3);
+    padding: 20px;
+    text-align: center;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .stat-card:hover {
+    background: rgba(139,0,0,0.2);
+    border-color: rgba(139,0,0,0.6);
+  }
+  .stat-value {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.8rem;
+    color: var(--crimson);
+    text-shadow: 0 0 20px var(--crimson);
+    display: block;
+  }
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    color: rgba(232,213,183,0.4);
+    text-transform: uppercase;
+    margin-top: 6px;
+    display: block;
+  }
+
+  /* ======= STORY / TIMELINE ======= */
+  #story {
+    background: rgba(2,0,0,0.8);
+  }
+
+  .timeline {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--crimson) 10%, var(--crimson) 90%, transparent);
+    transform: translateX(-50%);
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    margin-bottom: 60px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .timeline-item:nth-child(odd) .tl-content { grid-column: 1; text-align: right; }
+  .timeline-item:nth-child(odd) .tl-empty { grid-column: 3; }
+  .timeline-item:nth-child(even) .tl-content { grid-column: 3; }
+  .timeline-item:nth-child(even) .tl-empty { grid-column: 1; }
+
+  .tl-center {
+    grid-column: 2;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 16px;
+  }
+
+  .tl-dot {
+    width: 14px; height: 14px;
+    border: 2px solid var(--crimson);
+    border-radius: 50%;
+    background: var(--void);
+    box-shadow: 0 0 12px var(--crimson), 0 0 24px rgba(139,0,0,0.3);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tl-content {
+    padding: 0 30px;
+  }
+
+  .tl-age {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 4px;
+    color: var(--crimson);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .tl-event {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--bone);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .tl-desc {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(232,213,183,0.55);
+  }
+
+  /* ======= ABILITIES ======= */
+  #abilities {
+    background: linear-gradient(180deg, rgba(13,5,5,0.82) 0%, rgba(2,0,0,0.82) 100%);
+  }
+
+  .abilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .ability-card {
+    background: linear-gradient(135deg, rgba(20,5,5,0.75), rgba(10,2,2,0.8));
+    border: 1px solid rgba(139,0,0,0.2);
+    padding: 40px 30px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s, transform 0.4s;
+    cursor: default;
+  }
+
+  .ability-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(to right, transparent, var(--crimson), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+  }
+
+  .ability-card:hover {
+    border-color: rgba(139,0,0,0.5);
+    transform: translateY(-4px);
+  }
+
+  .ability-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .ability-bg-glyph {
+    position: absolute;
+    top: 50%; right: -20px;
+    transform: translateY(-50%);
+    font-size: 8rem;
+    opacity: 0.03;
+    line-height: 1;
+    transition: opacity 0.4s;
+  }
+
+  .ability-card:hover .ability-bg-glyph {
+    opacity: 0.07;
+  }
+
+  .ability-icon {
+    width: 50px; height: 50px;
+    margin-bottom: 20px;
+  }
+
+  .ability-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .ability-japanese {
+    font-size: 0.75rem;
+    color: var(--crimson);
+    margin-bottom: 14px;
+    display: block;
+    font-style: italic;
+  }
+
+  .ability-desc {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: rgba(232,213,183,0.55);
+  }
+
+  .ability-power {
+    margin-top: 20px;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ability-power-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--blood), var(--crimson), var(--ember));
+    border-radius: 2px;
+    width: 0;
+    transition: width 1.5s cubic-bezier(0.4,0,0.2,1) 0.3s;
+    box-shadow: 0 0 8px var(--crimson);
+  }
+
+  /* ======= GALLERY ======= */
+  #gallery {
+    background: rgba(2,0,0,0.8);
+    padding-bottom: 60px;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 4px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .gallery-item {
+    overflow: hidden;
+    position: relative;
+    background: var(--ash);
+    cursor: pointer;
+  }
+
+  .gallery-item:nth-child(1) { grid-column: 1/5; grid-row: 1/3; }
+  .gallery-item:nth-child(2) { grid-column: 5/9; grid-row: 1; }
+  .gallery-item:nth-child(3) { grid-column: 9/13; grid-row: 1; }
+  .gallery-item:nth-child(4) { grid-column: 5/8; grid-row: 2; }
+  .gallery-item:nth-child(5) { grid-column: 8/13; grid-row: 2; }
+  .gallery-item:nth-child(6) { grid-column: 1/5; grid-row: 3; }
+  .gallery-item:nth-child(7) { grid-column: 5/9; grid-row: 3; }
+  .gallery-item:nth-child(8) { grid-column: 9/13; grid-row: 3; }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    object-fit: cover;
+    filter: grayscale(20%) sepia(10%) contrast(1.1);
+    transition: transform 0.7s cubic-bezier(0.4,0,0.2,1), filter 0.5s;
+    display: block;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.08);
+    filter: grayscale(0%) sepia(5%) contrast(1.15);
+  }
+
+  .gallery-item-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(139,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 16px 18px;
+    gap: 10px;
+  }
+
+  .gallery-item:hover .gallery-item-overlay {
+    opacity: 1;
+  }
+
+  .gallery-item-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--bone);
+    text-transform: uppercase;
+    flex: 1;
+  }
+
+  .gallery-dl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--bone);
+    background: rgba(139,0,0,0.55);
+    border: 1px solid rgba(204,0,0,0.6);
+    padding: 7px 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.25s, border-color 0.25s, transform 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .gallery-dl-btn:hover {
+    background: rgba(204,0,0,0.8);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    color: #fff;
+  }
+  .gallery-dl-btn svg {
+    width: 12px; height: 12px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+  .gallery-item-overlay {
+    /* override to use flex row */
+  }
+
+  /* ======= QUOTES & LEGACY ======= */
+  #quotes {
+    background: linear-gradient(180deg, rgba(2,0,0,0.8) 0%, rgba(10,3,3,0.8) 100%);
+    padding: 120px 60px;
+  }
+
+  .big-quote {
+    max-width: 900px;
+    margin: 0 auto 80px;
+    text-align: center;
+    position: relative;
+  }
+
+  .big-quote::before {
+    content: '"';
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 12rem;
+    color: rgba(139,0,0,0.08);
+    position: absolute;
+    top: -60px;
+    left: -40px;
+    line-height: 1;
+  }
+
+  .big-quote blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.3rem, 2.5vw, 2rem);
+    line-height: 1.7;
+    color: var(--bone);
+    position: relative;
+    z-index: 1;
+  }
+
+  .big-quote cite {
+    display: block;
+    margin-top: 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    color: var(--crimson);
+    font-style: normal;
+    text-transform: uppercase;
+  }
+
+  .quote-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .quote-card {
+    border-left: 3px solid var(--crimson);
+    padding: 24px 30px;
+    background: rgba(139,0,0,0.05);
+    position: relative;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .quote-card:hover {
+    background: rgba(139,0,0,0.1);
+    border-color: var(--gold);
+  }
+
+  .quote-card p {
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(232,213,183,0.7);
+    margin-bottom: 16px;
+  }
+
+  .quote-card .speaker {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  /* ======= FANDOM ======= */
+  #fandom {
+    background: rgba(2,0,0,0.8);
+  }
+
+  .fandom-hero {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 80px;
+  }
+
+  .fandom-hero p {
+    font-size: 1.2rem;
+    line-height: 1.85;
+    color: rgba(232,213,183,0.65);
+  }
+
+  .fandom-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1300px;
+    margin: 0 auto 60px;
+  }
+
+  .fandom-card {
+    background: linear-gradient(135deg, rgba(30,8,8,0.6), rgba(10,2,2,0.7));
+    border: 1px solid rgba(139,0,0,0.2);
+    padding: 30px;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .fandom-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(201,168,76,0.4);
+  }
+
+  .fandom-number {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 3rem;
+    color: var(--crimson);
+    text-shadow: 0 0 30px var(--crimson);
+    display: block;
+    line-height: 1;
+  }
+
+  .fandom-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: rgba(232,213,183,0.4);
+    text-transform: uppercase;
+    margin-top: 10px;
+    display: block;
+  }
+
+  .fandom-desc {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(232,213,183,0.5);
+    margin-top: 12px;
+  }
+
+  /* ======= LEGACY MANIFESTO ======= */
+  #legacy {
+    background: rgba(20,8,8,0.82);
+    border-top: 1px solid rgba(139,0,0,0.3);
+    border-bottom: 1px solid rgba(139,0,0,0.3);
+    text-align: center;
+    padding: 100px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .legacy-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(139,0,0,0.1) 0%, transparent 70%);
+  }
+
+  .legacy-text {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .legacy-text h2 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    color: var(--bone);
+    margin-bottom: 40px;
+    line-height: 1.3;
+  }
+
+  .legacy-text h2 span {
+    color: var(--crimson);
+    text-shadow: 0 0 30px var(--crimson);
+  }
+
+  .legacy-text p {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: rgba(232,213,183,0.65);
+    margin-bottom: 20px;
+  }
+
+  /* ======= FOOTER ======= */
+  footer {
+    background: rgba(2,0,0,0.88);
+    text-align: center;
+    padding: 50px 60px;
+    border-top: 1px solid rgba(139,0,0,0.2);
+  }
+
+  footer .footer-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.5rem;
+    color: var(--crimson);
+    text-shadow: 0 0 30px var(--crimson);
+    margin-bottom: 16px;
+  }
+
+  footer p {
+    font-size: 0.8rem;
+    color: rgba(232,213,183,0.6);
+    letter-spacing: 2px;
+  }
+
+  footer .footer-kanji {
+    font-size: 3rem;
+    color: var(--gold);
+    margin: 20px 0;
+    letter-spacing: 20px;
+    text-shadow: 0 0 18px rgba(201,168,76,0.7), 0 0 40px rgba(201,168,76,0.3);
+  }
+
+  /* ======= SCROLLBAR ======= */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: var(--crimson); border-radius: 2px; }
+
+  /* ======= SHARINGAN SVG SPINNER ======= */
+  .sharingan-spinner {
+    animation: spin-slow 20s linear infinite;
+  }
+
+  /* ======= GLOW TEXT ======= */
+  .glow-text {
+    color: var(--crimson);
+    text-shadow: 0 0 10px var(--crimson), 0 0 30px rgba(139,0,0,0.5);
+  }
+
+  /* ======= RESPONSIVE ======= */
+  @media (max-width: 900px) {
+    nav { padding: 20px 30px; }
+    .nav-links { display: none; }
+    section { padding: 80px 30px; }
+    #sharingan-bg { opacity: 0.14; }
+    .hero-sharingan { opacity: 0.22; width: 88vw; height: 88vw; max-width: 520px; max-height: 520px; }
+    #hero { min-height: 100svh; }
+    .hero-title { font-size: clamp(4.2rem, 22vw, 7rem); }
+    .hero-subtitle { font-size: 0.92rem; letter-spacing: 3px; padding: 0 10px; }
+    .hero-quote { font-size: 1.15rem; line-height: 1.65; padding: 0 8px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .gallery-grid { grid-template-columns: 1fr; gap: 10px; }
+    .gallery-item { grid-column: 1 / -1 !important; grid-row: auto !important; }
+    .gallery-item img { width: 100%; height: auto !important; min-height: 0 !important; aspect-ratio: 16 / 10; }
+    .gallery-item-overlay { opacity: 1; padding: 12px 14px; }
+    .gallery-item-label { font-size: 0.6rem; letter-spacing: 2px; }
+    .gallery-dl-btn { font-size: 0.5rem; padding: 6px 10px; }
+    .timeline::before { left: 20px; }
+    .timeline-item { grid-template-columns: 0 40px 1fr; }
+    .timeline-item:nth-child(odd) .tl-content { grid-column: 3; text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" src="senya.mp3" preload="auto" autoplay loop style="display:none;"></audio>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Background Canvases -->
+<canvas id="sharingan-bg"></canvas>
+<canvas id="crow-canvas"></canvas>
+<canvas id="particle-canvas"></canvas>
+
+<div class="site-content">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">UCHIHA</div>
+    <ul class="nav-links">
+      <li><a href="#about">Origin</a></li>
+      <li><a href="#story">Chronicle</a></li>
+      <li><a href="#abilities">Jutsu</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#fandom">Legacy</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg-gradient"></div>
+    <svg class="hero-sharingan" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="90" stroke="#cc0000" stroke-width="2"/>
+      <circle cx="100" cy="100" r="70" stroke="#cc0000" stroke-width="1"/>
+      <circle cx="100" cy="100" r="30" fill="#cc0000" opacity="0.3"/>
+      <circle cx="100" cy="100" r="15" fill="#cc0000"/>
+      <path d="M100 30 Q115 65 100 70 Q85 65 100 30Z" fill="#cc0000"/>
+      <path d="M100 30 Q115 65 100 70 Q85 65 100 30Z" fill="#cc0000" transform="rotate(120 100 100)"/>
+      <path d="M100 30 Q115 65 100 70 Q85 65 100 30Z" fill="#cc0000" transform="rotate(240 100 100)"/>
+      <circle cx="100" cy="50" r="8" fill="#cc0000"/>
+      <circle cx="100" cy="50" r="8" fill="#cc0000" transform="rotate(120 100 100)"/>
+      <circle cx="100" cy="50" r="8" fill="#cc0000" transform="rotate(240 100 100)"/>
+    </svg>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Uchiha Clan — Konohagakure</p>
+      <h1 class="hero-title">ITACHI</h1>
+      <p class="hero-subtitle">The Shadow That Protected the Leaf</p>
+      <p class="hero-quote">"People live their lives bound by what they accept as correct and true.<br>That is how they define 'reality'."</p>
+    </div>
+
+    <div class="hero-scroll">
+      <span>Descend</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="blood-divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-image-wrap">
+        <div class="about-image-frame">
+          <div class="about-image-inner">
+            <img class="itachi-portrait"
+              src="moon.jpg"
+              alt="Itachi Uchiha"
+              onerror="this.onerror=null;this.src='moon.jpg';"
+            />
+            <div class="about-image-overlay"></div>
+          </div>
+        </div>
+        <div class="about-corner tl"></div>
+        <div class="about-corner tr"></div>
+        <div class="about-corner bl"></div>
+        <div class="about-corner br"></div>
+      </div>
+
+      <div class="about-text">
+        <span class="section-label">Who He Is</span>
+        <h2 class="section-title">The Prodigy<br>of Shadows</h2>
+        <p>Itachi Uchiha was a shinobi of Konohagakure's Uchiha clan — a prodigy who graduated the Academy at age 7, mastered the Sharingan at 8, became a Chūnin at 10, and joined the elite ANBU Black Ops at 13.</p>
+        <p>He was celebrated as a genius even by Uchiha standards — a man whose mastery of genjutsu, ninjutsu, and taijutsu was unmatched in his generation. Yet beneath the glory lay a burden no child should ever carry.</p>
+        <p>Tasked by Konoha's leadership to prevent a coup that would plunge the world into war, Itachi made an impossible choice — slaughter his entire clan, and carry the curse of a murderer for the rest of his days.</p>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">18</span>
+            <span class="stat-label">Age at Death</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">S</span>
+            <span class="stat-label">Threat Rank</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">∞</span>
+            <span class="stat-label">Sacrifice</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">13</span>
+            <span class="stat-label">ANBU Age</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">7</span>
+            <span class="stat-label">Academy Grad</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">卍</span>
+            <span class="stat-label">Mangekyō</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="blood-divider"></div>
+
+  <!-- STORY / TIMELINE -->
+  <section id="story">
+    <div style="text-align:center; max-width:800px; margin:0 auto 80px;">
+      <span class="section-label">Chronicle</span>
+      <h2 class="section-title">The Life of a<br>Cursed Genius</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-content">
+          <span class="tl-age">Age 4</span>
+          <div class="tl-event">Witness to War</div>
+          <div class="tl-desc">At just four years old, Itachi witnessed the brutal aftermath of the Third Shinobi World War. The death and suffering scarred him deeply, making him a pacifist at heart before he was even old enough to wield a kunai.</div>
+        </div>
+        <div class="tl-center"><div class="tl-dot"></div></div>
+        <div class="tl-empty"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-empty"></div>
+        <div class="tl-center"><div class="tl-dot"></div></div>
+        <div class="tl-content">
+          <span class="tl-age">Age 7</span>
+          <div class="tl-event">Academy Graduation</div>
+          <div class="tl-desc">Itachi graduated the Ninja Academy at age 7 — a feat that normally takes years of disciplined study. He had already begun to surpass shinobi twice his age, and the village whispered of a once-in-a-generation talent.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <span class="tl-age">Age 8</span>
+          <div class="tl-event">Sharingan Awakening</div>
+          <div class="tl-desc">After witnessing the death of his best friend Shisui Uchiha, Itachi's grief awakened the Sharingan — and soon after, the Mangekyō Sharingan. The loss that shaped his power would haunt him for the rest of his life.</div>
+        </div>
+        <div class="tl-center"><div class="tl-dot"></div></div>
+        <div class="tl-empty"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-empty"></div>
+        <div class="tl-center"><div class="tl-dot"></div></div>
+        <div class="tl-content">
+          <span class="tl-age">Age 13</span>
+          <div class="tl-event">ANBU Captain</div>
+          <div class="tl-desc">By 13, Itachi had risen to Captain of the ANBU Black Ops — the youngest in Konoha's history. He served as both its deadliest weapon and most conflicted conscience, simultaneously feeding intelligence to the Hokage about his own clan.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <span class="tl-age">Age 13</span>
+          <div class="tl-event">The Night of the Massacre</div>
+          <div class="tl-desc">Acting on orders from Danzō Shimura and the Konoha elders — and in alliance with Obito Uchiha — Itachi killed every member of the Uchiha clan in a single night. He spared one life: his younger brother Sasuke, whom he loved above all else.</div>
+        </div>
+        <div class="tl-center"><div class="tl-dot"></div></div>
+        <div class="tl-empty"></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-empty"></div>
+        <div class="tl-center"><div class="tl-dot"></div></div>
+        <div class="tl-content">
+          <span class="tl-age">Age 13–17</span>
+          <div class="tl-event">Life as Akatsuki</div>
+          <div class="tl-desc">To complete his cover, Itachi joined the Akatsuki — the world's most feared criminal organisation. In truth, he served as a double agent for Konoha, feeding information while slowly dying from a debilitating illness he refused to treat.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-content">
+          <span class="tl-age">Age 18</span>
+          <div class="tl-event">Final Battle & Death</div>
+          <div class="tl-desc">Itachi faced Sasuke in their fated confrontation. Though disease had stolen most of his vision and his life, Itachi fought on — not to kill Sasuke, but to transplant his eyes and free Sasuke from Orochimaru's cursed seal. His final act was a gentle tap on Sasuke's forehead. "Sorry, Sasuke. This is the last time."</div>
+        </div>
+        <div class="tl-center"><div class="tl-dot"></div></div>
+        <div class="tl-empty"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="blood-divider"></div>
+
+  <!-- ABILITIES -->
+  <section id="abilities">
+    <div style="text-align:center; max-width:800px; margin:0 auto 80px;">
+      <span class="section-label">Jutsu Arsenal</span>
+      <h2 class="section-title">Powers of the<br>Crimson Eye</h2>
+    </div>
+
+    <div class="abilities-grid">
+      <div class="ability-card" data-power="98">
+        <div class="ability-bg-glyph">卍</div>
+        <svg class="ability-icon" viewBox="0 0 50 50" fill="none">
+          <circle cx="25" cy="25" r="22" stroke="#cc0000" stroke-width="1.5"/>
+          <circle cx="25" cy="25" r="8" fill="#cc0000" opacity="0.4"/>
+          <circle cx="25" cy="25" r="4" fill="#cc0000"/>
+          <path d="M25 6 Q30 18 25 20 Q20 18 25 6Z" fill="#cc0000"/>
+          <path d="M25 6 Q30 18 25 20 Q20 18 25 6Z" fill="#cc0000" transform="rotate(120 25 25)"/>
+          <path d="M25 6 Q30 18 25 20 Q20 18 25 6Z" fill="#cc0000" transform="rotate(240 25 25)"/>
+        </svg>
+        <div class="ability-name">Mangekyō Sharingan</div>
+        <span class="ability-japanese">万華鏡写輪眼</span>
+        <div class="ability-desc">The pinnacle of Uchiha ocular power. Itachi's Mangekyō Sharingan grants access to Tsukuyomi, Amaterasu, and Susanoo — three invincible techniques that place him among the most dangerous shinobi who ever lived.</div>
+        <div class="ability-power"><div class="ability-power-fill" style="--pw:98%"></div></div>
+      </div>
+
+      <div class="ability-card" data-power="100">
+        <div class="ability-bg-glyph">月</div>
+        <svg class="ability-icon" viewBox="0 0 50 50" fill="none">
+          <circle cx="25" cy="25" r="20" stroke="#cc0000" stroke-width="1.5"/>
+          <path d="M25 5 A20 20 0 0 1 25 45 A12 12 0 0 0 25 5Z" fill="#cc0000" opacity="0.6"/>
+        </svg>
+        <div class="ability-name">Tsukuyomi</div>
+        <span class="ability-japanese">月読</span>
+        <div class="ability-desc">A nightmarish genjutsu that traps its victim in a mental dimension where Itachi controls time itself. 72 hours of torture pass in the span of a single second. Its victims are left catatonic, their minds shattered beyond repair.</div>
+        <div class="ability-power"><div class="ability-power-fill" style="--pw:100%"></div></div>
+      </div>
+
+      <div class="ability-card" data-power="95">
+        <div class="ability-bg-glyph">天</div>
+        <svg class="ability-icon" viewBox="0 0 50 50" fill="none">
+          <path d="M10 35 L25 10 L40 35" stroke="#cc0000" stroke-width="1.5" fill="none"/>
+          <path d="M15 35 Q25 20 35 35" fill="#cc0000" opacity="0.4"/>
+          <circle cx="25" cy="10" r="4" fill="#cc0000"/>
+        </svg>
+        <div class="ability-name">Amaterasu</div>
+        <span class="ability-japanese">天照</span>
+        <div class="ability-desc">Black flames summoned from Itachi's left eye that burn at 7,000°C and cannot be extinguished by any force. They burn without oxygen, without end — consuming everything the eye perceives until nothing remains but ash.</div>
+        <div class="ability-power"><div class="ability-power-fill" style="--pw:95%"></div></div>
+      </div>
+
+      <div class="ability-card" data-power="100">
+        <div class="ability-bg-glyph">須</div>
+        <svg class="ability-icon" viewBox="0 0 50 50" fill="none">
+          <rect x="10" y="8" width="30" height="34" rx="2" stroke="#cc0000" stroke-width="1.5" fill="none"/>
+          <path d="M18 20 L32 20 M18 28 L32 28" stroke="#cc0000" stroke-width="1.5"/>
+          <circle cx="25" cy="34" r="3" fill="#cc0000"/>
+        </svg>
+        <div class="ability-name">Susanoo</div>
+        <span class="ability-japanese">須佐能乎</span>
+        <div class="ability-desc">A colossal spectral warrior that fully envelops its user. Itachi's Susanoo wields the Sword of Totsuka — a weapon that seals anything it pierces into an eternal dreamlike genjutsu — and the Yata Mirror, said to be invincible against all elements.</div>
+        <div class="ability-power"><div class="ability-power-fill" style="--pw:100%"></div></div>
+      </div>
+
+      <div class="ability-card" data-power="85">
+        <div class="ability-bg-glyph">幻</div>
+        <svg class="ability-icon" viewBox="0 0 50 50" fill="none">
+          <path d="M10 25 Q15 10 25 15 Q35 10 40 25 Q35 40 25 35 Q15 40 10 25Z" stroke="#cc0000" stroke-width="1.5" fill="none"/>
+          <circle cx="25" cy="25" r="5" fill="#cc0000" opacity="0.5"/>
+        </svg>
+        <div class="ability-name">Genjutsu Mastery</div>
+        <span class="ability-japanese">幻術</span>
+        <div class="ability-desc">Itachi was widely regarded as the greatest genjutsu user of his generation. He could cast multiple layered illusions simultaneously — trapping enemies in an endless loop of escaping one nightmare, only to enter another.</div>
+        <div class="ability-power"><div class="ability-power-fill" style="--pw:85%"></div></div>
+      </div>
+
+      <div class="ability-card" data-power="88">
+        <div class="ability-bg-glyph">火</div>
+        <svg class="ability-icon" viewBox="0 0 50 50" fill="none">
+          <path d="M25 8 Q30 18 28 22 Q35 15 33 28 Q38 20 35 32 Q32 42 25 44 Q18 42 15 32 Q12 20 17 28 Q15 15 22 22 Q20 18 25 8Z" fill="#cc0000" opacity="0.7"/>
+        </svg>
+        <div class="ability-name">Fire Release</div>
+        <span class="ability-japanese">火遁・豪火球の術</span>
+        <div class="ability-desc">A master of fire-based ninjutsu, Itachi could unleash the Grand Fireball Technique — a blazing sphere of white-hot flame — as well as the Phoenix Sage Fire Technique, which launches volleys of smaller guided fireballs capable of melting rock.</div>
+        <div class="ability-power"><div class="ability-power-fill" style="--pw:88%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="blood-divider"></div>
+
+  <!-- GALLERY -->
+  <!-- GALLERY -->
+<section id="gallery">
+  <div style="text-align:center; max-width:800px; margin:0 auto 60px;">
+    <span class="section-label">Gallery</span>
+    <h2 class="section-title">Faces of the<br>Raven</h2>
+  </div>
+
+  <div class="gallery-grid">
+
+    <div class="gallery-item" style="grid-column:1/5;grid-row:1/3;">
+      <img src="1.png" alt="The Rogue Shinobi"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">The Rogue Shinobi</span>
+        <a class="gallery-dl-btn" href="1.png" target="_blank">Open</a>
+      </div>
+    </div>
+
+    <div class="gallery-item" style="grid-column:5/9;grid-row:1;">
+      <img src="2.jpg" alt="Sharingan Gaze"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">Sharingan Gaze</span>
+        <a class="gallery-dl-btn" href="2.jpg" target="_blank">Open</a>
+      </div>
+    </div>
+
+    <div class="gallery-item" style="grid-column:9/13;grid-row:1;">
+      <img src="3.jpg" alt="Akatsuki"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">Akatsuki</span>
+        <a class="gallery-dl-btn" href="3.jpg" target="_blank">Open</a>
+      </div>
+    </div>
+
+    <div class="gallery-item" style="grid-column:5/8;grid-row:2;">
+      <img src="the child prodigy.jpg" alt="The Child Prodigy"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">The Child Prodigy</span>
+        <a class="gallery-dl-btn" href="the child prodigy.jpg" target="_blank">Open</a>
+      </div>
+    </div>
+
+    <div class="gallery-item" style="grid-column:8/13;grid-row:2;">
+      <img src="ametarasu.png" alt="Amaterasu"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">Amaterasu</span>
+        <a class="gallery-dl-btn" href="ametarasu.png" target="_blank">Open</a>
+      </div>
+    </div>
+
+    <div class="gallery-item" style="grid-column:1/5;grid-row:3;">
+      <img src="susano.jpg" alt="Susanoo Arises"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">Susanoo Arises</span>
+        <a class="gallery-dl-btn" href="susano.jpg" target="_blank">Open</a>
+      </div>
+    </div>
+
+    <div class="gallery-item" style="grid-column:5/9;grid-row:3;">
+      <img src="broos.jpg" alt="Brothers"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">Brothers</span>
+        <a class="gallery-dl-btn" href="broos.jpg" target="_blank">Open</a>
+      </div>
+    </div>
+
+    <div class="gallery-item" style="grid-column:9/13;grid-row:3;">
+      <img src="final battle.png" alt="The Final Battle"
+      style="width:100%;height:100%;min-height:200px;object-fit:cover;filter:grayscale(20%) sepia(10%) contrast(1.1);transition:transform .7s cubic-bezier(.4,0,.2,1),filter .5s;display:block;">
+      <div class="gallery-item-overlay">
+        <span class="gallery-item-label">The Final Battle</span>
+        <a class="gallery-dl-btn" href="final battle.png" target="_blank">Open</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <div class="blood-divider"></div>
+
+  <!-- QUOTES -->
+  <section id="quotes">
+    <div style="text-align:center; margin-bottom:80px;">
+      <span class="section-label">His Words</span>
+      <h2 class="section-title">Words Cut Deeper<br>Than Any Blade</h2>
+    </div>
+
+    <div class="big-quote">
+      <blockquote>
+        "Those who forgive themselves, and are able to accept their true nature... They are the strong ones."
+      </blockquote>
+      <cite>— Itachi Uchiha</cite>
+    </div>
+
+    <div class="quote-grid">
+      <div class="quote-card">
+        <p>"You and I are flesh and blood. I'm always going to be there for you, even if it's only as an obstacle for you to overcome."</p>
+        <span class="speaker">To Sasuke</span>
+      </div>
+      <div class="quote-card">
+        <p>"No matter what darkness or contradictions lie within the village, I am still Konoha's Itachi Uchiha."</p>
+        <span class="speaker">Itachi's Resolve</span>
+      </div>
+      <div class="quote-card">
+        <p>"Don't cry, Sasuke. Your big brother is here to protect you, no matter what happens."</p>
+        <span class="speaker">The Night of the Massacre</span>
+      </div>
+      <div class="quote-card">
+        <p>"The true measure of a shinobi is not how he lives but how he dies. It's not what they do in life but what they did before dying that proves their worth."</p>
+        <span class="speaker">Philosophy of the Raven</span>
+      </div>
+      <div class="quote-card">
+        <p>"Self-sacrifice... A nameless shinobi who protects peace from within its shadow. That is the true mark of a Hokage."</p>
+        <span class="speaker">On True Leadership</span>
+      </div>
+      <div class="quote-card">
+        <p>"Sorry, Sasuke. This is the last time."</p>
+        <span class="speaker">Final Words</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="blood-divider"></div>
+
+  <!-- FANDOM -->
+  <section id="fandom">
+    <div style="text-align:center; max-width:800px; margin:0 auto 60px;">
+      <span class="section-label">Cultural Impact</span>
+      <h2 class="section-title">What the World<br>Thinks of Him</h2>
+    </div>
+
+    <div class="fandom-hero">
+      <p>Itachi Uchiha is considered one of the greatest anime characters ever written. His story isn't just a tale of tragedy — it's a masterclass in moral complexity, unconditional love, and the weight of impossible choices. Fans around the world wept when they finally understood the truth behind his eyes.</p>
+    </div>
+
+    <div class="fandom-cards">
+      <div class="fandom-card">
+        <span class="fandom-number">#1</span>
+        <span class="fandom-label">Most Beloved Antagonist → Hero</span>
+        <p class="fandom-desc">Itachi's character arc — from feared villain to tragic hero — is cited as one of the greatest redemption reveals in storytelling history.</p>
+      </div>
+      <div class="fandom-card">
+        <span class="fandom-number">∞</span>
+        <span class="fandom-label">Fan Tributes Worldwide</span>
+        <p class="fandom-desc">Millions of fan arts, cosplays, tattoos, and shrines dedicated to him. His forehead-poke became an iconic symbol of sibling love.</p>
+      </div>
+      <div class="fandom-card">
+        <span class="fandom-number">8.9</span>
+        <span class="fandom-label">His Death Episode Rating</span>
+        <p class="fandom-desc">Episode 138, "The End" — the moment Itachi dies and the truth is revealed — holds one of the highest episode ratings in anime history.</p>
+      </div>
+      <div class="fandom-card">
+        <span class="fandom-number">卍</span>
+        <span class="fandom-label">Symbol of Sacrifice</span>
+        <p class="fandom-desc">The Mangekyō Sharingan design has become one of the most recognised symbols in anime culture, tattooed on hundreds of thousands globally.</p>
+      </div>
+    </div>
+
+    <div class="quote-grid" style="max-width:1300px; margin:0 auto;">
+      <div class="quote-card">
+        <p>"Itachi Uchiha made me cry harder than any book, film, or show ever has. When I finally understood why he did what he did — I had to pause the episode and just sit there."</p>
+        <span class="speaker">Reddit r/Naruto, 47k upvotes</span>
+      </div>
+      <div class="quote-card">
+        <p>"The reveal of Itachi's true motivations is the single greatest subversion of expectations in anime. Kishimoto turned a villain into the most heartbreaking hero I've ever encountered."</p>
+        <span class="speaker">Anime News Network Review</span>
+      </div>
+      <div class="quote-card">
+        <p>"He is what every anti-hero aspires to be but so few achieve: morally terrifying and yet utterly heartbreaking. Itachi is a philosophical statement about duty, love, and suffering."</p>
+        <span class="speaker">Crunchyroll Character Rankings</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGACY -->
+  <section id="legacy">
+    <div class="legacy-bg"></div>
+    <div class="legacy-text">
+      <span class="section-label" style="display:block;text-align:center;margin-bottom:24px;">The Final Truth</span>
+      <h2>"He was never a <span>villain</span>.<br>He was a <span>god</span> who bled<br>for those who hated him."</h2>
+      <p>Itachi Uchiha lived and died for a village that called him a murderer. He endured the hatred of the brother he adored, the contempt of the world he served, and the deterioration of his own body — all to maintain the peace he had witnessed the cost of as a four-year-old child.</p>
+      <p>He is not simply a fictional character. He is a meditation on sacrifice — on what it means to love someone so much that you become the monster in their story so they can be the hero.</p>
+      <p>The crows scatter. The genjutsu fades. And what remains, in the quiet after the credits roll, is the unbearable weight of understanding.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">ITACHI UCHIHA</div>
+    <div class="footer-kanji">写 輪 眼</div>
+    <p>UCHIHA CLAN · KONOHAGAKURE · ANBU BLACK OPS · AKATSUKI</p>
+    <p style="margin-top:12px; font-style:italic; font-size:1rem; color:rgba(232,213,183,0.75); letter-spacing:1px;">"He died for the leaf. The leaf never deserved him."</p>
+  </footer>
+
+</div><!-- /site-content -->
+
+<script>
+// ======= BACKGROUND MUSIC =======
+(function() {
+  const bgMusic = document.getElementById('bgMusic');
+  if (!bgMusic) return;
+
+  // Ensure every fresh load/reload starts the track from the beginning.
+  bgMusic.currentTime = 0;
+
+  const tryPlay = () => {
+    bgMusic.play().catch(() => {});
+  };
+
+  tryPlay();
+
+  // Fallback: if autoplay is blocked, start on first user interaction.
+  const unlockPlayback = () => {
+    tryPlay();
+    if (!bgMusic.paused) {
+      interactionEvents.forEach((evt) => {
+        window.removeEventListener(evt, unlockPlayback);
+      });
+    }
+  };
+
+  const interactionEvents = ['pointerdown', 'keydown', 'touchstart'];
+  interactionEvents.forEach((evt) => {
+    window.addEventListener(evt, unlockPlayback, { passive: true });
+  });
+})();
+
+// ======= CUSTOM CURSOR =======
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  dot.style.left = mx + 'px';
+  dot.style.top = my + 'px';
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+
+// ======= SHARINGAN BACKGROUND =======
+(function() {
+  const canvas = document.getElementById('sharingan-bg');
+  const ctx = canvas.getContext('2d');
+  let w, h, eyes = [];
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function generateEyes() {
+    eyes = [];
+    const count = Math.floor((w * h) / 90000);
+    for (let i = 0; i < count + 3; i++) {
+      eyes.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 40 + Math.random() * 80,
+        rot: Math.random() * Math.PI * 2,
+        speed: (Math.random() * 0.003 + 0.001) * (Math.random() < 0.5 ? 1 : -1),
+        alpha: 0.04 + Math.random() * 0.06
+      });
+    }
+  }
+  generateEyes();
+  window.addEventListener('resize', generateEyes);
+
+  function drawSharingan(ctx, x, y, r, rot, alpha) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = '#cc0000';
+    ctx.fillStyle = '#cc0000';
+
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Inner ring
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.6, 0, Math.PI * 2);
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Pupil
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Tomoe x3
+    for (let i = 0; i < 3; i++) {
+      const angle = (i / 3) * Math.PI * 2;
+      const tx = Math.sin(angle) * r * 0.42;
+      const ty = -Math.cos(angle) * r * 0.42;
+      ctx.save();
+      ctx.translate(tx, ty);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.13, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    eyes.forEach(e => {
+      e.rot += e.speed;
+      drawSharingan(ctx, e.x, e.y, e.r, e.rot, e.alpha);
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ======= CROWS =======
+(function() {
+  const canvas = document.getElementById('crow-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Crow {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = init ? Math.random() * w : -60;
+      this.y = Math.random() * h * 0.75;
+      this.speed = 0.6 + Math.random() * 1.4;
+      this.scale = 0.3 + Math.random() * 0.7;
+      this.flapPhase = Math.random() * Math.PI * 2;
+      this.flapSpeed = 0.08 + Math.random() * 0.12;
+      this.opacity = 0.2 + Math.random() * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.3;
+    }
+    update() {
+      this.x += this.speed;
+      this.y += this.vy + Math.sin(this.flapPhase * 0.3) * 0.4;
+      this.flapPhase += this.flapSpeed;
+      if (this.x > w + 80) this.reset(false);
+    }
+    draw(ctx) {
+      const wing = Math.sin(this.flapPhase) * 12 * this.scale;
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.globalAlpha = this.opacity;
+      ctx.fillStyle = '#1a0000';
+      ctx.strokeStyle = 'rgba(50,0,0,0.8)';
+      ctx.lineWidth = 0.8;
+
+      // Body
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 10 * this.scale, 5 * this.scale, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(9 * this.scale, -2 * this.scale, 4 * this.scale, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Beak
+      ctx.beginPath();
+      ctx.moveTo(13 * this.scale, -2 * this.scale);
+      ctx.lineTo(18 * this.scale, -1 * this.scale);
+      ctx.lineTo(13 * this.scale, 0);
+      ctx.fill();
+
+      // Left wing
+      ctx.beginPath();
+      ctx.moveTo(-2 * this.scale, -2 * this.scale);
+      ctx.quadraticCurveTo(-8 * this.scale, -10 * this.scale - wing, -18 * this.scale, -4 * this.scale - wing * 0.5);
+      ctx.quadraticCurveTo(-10 * this.scale, 4 * this.scale, -2 * this.scale, 2 * this.scale);
+      ctx.fill();
+
+      // Right wing
+      ctx.beginPath();
+      ctx.moveTo(4 * this.scale, -2 * this.scale);
+      ctx.quadraticCurveTo(10 * this.scale, -10 * this.scale - wing, 20 * this.scale, -6 * this.scale - wing * 0.5);
+      ctx.quadraticCurveTo(12 * this.scale, 4 * this.scale, 4 * this.scale, 2 * this.scale);
+      ctx.fill();
+
+      // Tail
+      ctx.beginPath();
+      ctx.moveTo(-8 * this.scale, 0);
+      ctx.lineTo(-16 * this.scale, 4 * this.scale);
+      ctx.lineTo(-14 * this.scale, -2 * this.scale);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  const crows = Array.from({length: 24}, () => new Crow());
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    crows.forEach(c => { c.update(); c.draw(ctx); });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ======= EMBER PARTICLES =======
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = Array.from({length: 60}, () => ({
+    x: Math.random() * 1000,
+    y: Math.random() * 1000,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: -(0.2 + Math.random() * 0.6),
+    size: 0.5 + Math.random() * 2,
+    life: Math.random(),
+    decay: 0.002 + Math.random() * 0.004,
+    hue: Math.random() < 0.7 ? 0 : 30
+  }));
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+      if (p.life <= 0) {
+        p.x = Math.random() * w;
+        p.y = h + 10;
+        p.life = 0.6 + Math.random() * 0.4;
+        p.vx = (Math.random() - 0.5) * 0.4;
+        p.vy = -(0.2 + Math.random() * 0.8);
+      }
+      ctx.save();
+      ctx.globalAlpha = p.life * 0.6;
+      ctx.fillStyle = `hsl(${p.hue}, 100%, 55%)`;
+      ctx.shadowColor = `hsl(${p.hue}, 100%, 40%)`;
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ======= SCROLL ANIMATIONS =======
+const timelineItems = document.querySelectorAll('.timeline-item');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.2 });
+timelineItems.forEach(item => observer.observe(item));
+
+// Power bars animation
+const powerBars = document.querySelectorAll('.ability-power-fill');
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const bar = e.target;
+      const pw = bar.style.getPropertyValue('--pw') || bar.parentElement.parentElement.dataset.power + '%';
+      bar.style.width = pw;
+    }
+  });
+}, { threshold: 0.5 });
+powerBars.forEach(bar => {
+  barObserver.observe(bar);
+  // Set width from CSS var
+  const card = bar.closest('.ability-card');
+  if (card && card.dataset.power) {
+    bar.style.setProperty('--pw', card.dataset.power + '%');
+  }
+});
+
+// Also trigger with inline style
+document.querySelectorAll('.ability-card').forEach(card => {
+  const bar = card.querySelector('.ability-power-fill');
+  const pw = card.dataset.power;
+  if (bar && pw) {
+    const cardObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setTimeout(() => bar.style.width = pw + '%', 200);
+      }
+    }, { threshold: 0.3 });
+    cardObserver.observe(card);
+  }
+});
+
+// Hover on ability cards — subtle red glow effect
+document.querySelectorAll('.ability-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    card.style.boxShadow = '0 0 40px rgba(139,0,0,0.25), inset 0 0 40px rgba(139,0,0,0.05)';
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.boxShadow = '';
+  });
+});
+
+// Cursor scale on hover
+document.querySelectorAll('a, .ability-card, .gallery-item, .quote-card, .fandom-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    dot.style.transform = 'translate(-50%, -50%) scale(2)';
+    ring.style.transform = 'translate(-50%, -50%) scale(1.5)';
+    ring.style.borderColor = 'rgba(201,168,76,0.8)';
+  });
+  el.addEventListener('mouseleave', () => {
+    dot.style.transform = 'translate(-50%, -50%) scale(1)';
+    ring.style.transform = 'translate(-50%, -50%) scale(1)';
+    ring.style.borderColor = 'rgba(204,0,0,0.6)';
+  });
+});
+
+// ======= ITACHI EYE SYSTEM — INTRO + PERSISTENT BACKGROUND =======
+(function () {
+  const eio = t => t < .5 ? 2*t*t : -1+(4-2*t)*t;
+
+  // ─────────────────────────────────────────────
+  //  Shared: draw the Mangekyō iris
+  // ─────────────────────────────────────────────
+  function drawIris(ctx, cx, cy, R, rot) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+
+    // wide ambient glow halo
+    const ag = ctx.createRadialGradient(0,0,R*.1, 0,0,R*2.4);
+    ag.addColorStop(0,  'rgba(220,0,0,.55)');
+    ag.addColorStop(.4, 'rgba(140,0,0,.25)');
+    ag.addColorStop(1,  'rgba(0,0,0,0)');
+    ctx.fillStyle=ag; ctx.beginPath(); ctx.arc(0,0,R*2.4,0,Math.PI*2); ctx.fill();
+
+    // sclera base
+    ctx.beginPath(); ctx.arc(0,0,R,0,Math.PI*2);
+    ctx.fillStyle='#0e0202'; ctx.fill();
+
+    // iris gradient
+    const ig = ctx.createRadialGradient(0,0,0, 0,0,R*.9);
+    ig.addColorStop(0,  '#ff2800');
+    ig.addColorStop(.18,'#cc0000');
+    ig.addColorStop(.5, '#8b0000');
+    ig.addColorStop(.82,'#3a0000');
+    ig.addColorStop(1,  '#0a0000');
+    ctx.beginPath(); ctx.arc(0,0,R*.9,0,Math.PI*2); ctx.fillStyle=ig; ctx.fill();
+
+    // outer ring
+    ctx.beginPath(); ctx.arc(0,0,R*.87,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,80,0,.9)'; ctx.lineWidth=R*.03; ctx.stroke();
+    // inner ring
+    ctx.beginPath(); ctx.arc(0,0,R*.5,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,60,0,.7)'; ctx.lineWidth=R*.02; ctx.stroke();
+
+    // 3 curved Mangekyō blades
+    for (let i=0;i<3;i++) {
+      ctx.save(); ctx.rotate(i*Math.PI*2/3);
+      ctx.beginPath();
+      ctx.moveTo(0,-R*.5);
+      ctx.bezierCurveTo( R*.44,-R*.4,  R*.52, R*.08,  R*.08, R*.46);
+      ctx.bezierCurveTo(-R*.1,  R*.3, -R*.08,-R*.06,  0,    -R*.5);
+      const bg=ctx.createLinearGradient(0,-R*.5, R*.3,R*.3);
+      bg.addColorStop(0,'rgba(255,120,0,1)');
+      bg.addColorStop(.45,'rgba(210,10,0,.85)');
+      bg.addColorStop(1,'rgba(50,0,0,.05)');
+      ctx.fillStyle=bg; ctx.fill();
+      ctx.strokeStyle='rgba(255,160,0,.8)'; ctx.lineWidth=R*.013; ctx.stroke();
+      ctx.restore();
+    }
+
+    // 3 tomoe
+    for (let i=0;i<3;i++) {
+      ctx.save(); ctx.rotate(i*Math.PI*2/3 + Math.PI/3);
+      ctx.translate(0,-R*.68);
+      ctx.beginPath(); ctx.ellipse(0,0,R*.08,R*.13,0,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,140,0,1)'; ctx.fill();
+      ctx.restore();
+    }
+
+    // pupil
+    const pg=ctx.createRadialGradient(0,0,0, 0,0,R*.23);
+    pg.addColorStop(0,'#000'); pg.addColorStop(1,'#0d0000');
+    ctx.beginPath(); ctx.arc(0,0,R*.23,0,Math.PI*2); ctx.fillStyle=pg; ctx.fill();
+
+    // gleam
+    ctx.beginPath(); ctx.arc(-R*.06,-R*.07,R*.05,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.25)'; ctx.fill();
+
+    ctx.restore();
+  }
+
+  // ─────────────────────────────────────────────
+  //  Shared: draw one eye (iris + eyelids) onto any ctx
+  //  lidAlpha: 0 = transparent lids (bg mode), 1 = opaque (intro mode)
+  // ─────────────────────────────────────────────
+  function drawEye(ctx, W, H, cx, cy, eyeW, openness, spin, lidAlpha) {
+    const hw=eyeW*.5, topH=eyeW*.32*openness, botH=eyeW*.19*openness, R=eyeW*.22;
+
+    // iris clipped to almond
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx-hw,cy);
+    ctx.bezierCurveTo(cx-hw*.25,cy-topH*1.15, cx+hw*.25,cy-topH*1.15, cx+hw,cy);
+    ctx.bezierCurveTo(cx+hw*.25,cy+botH*.9,   cx-hw*.25,cy+botH*.9,   cx-hw,cy);
+    ctx.closePath(); ctx.clip();
+    ctx.fillStyle='rgba(6,0,0,.9)'; ctx.fill();
+    if (openness>.06) {
+      ctx.globalAlpha = Math.min(1,(openness-.06)/.38);
+      drawIris(ctx,cx,cy,R,spin);
+      ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+
+    // upper lid
+    ctx.save();
+    const ulg = ctx.createLinearGradient(cx,cy-topH*1.2, cx,cy);
+    ulg.addColorStop(0, `rgba(3,0,0,${lidAlpha})`);
+    ulg.addColorStop(.65,`rgba(6,0,0,${lidAlpha*.7})`);
+    ulg.addColorStop(1,  'rgba(15,2,2,0)');
+    ctx.beginPath();
+    ctx.moveTo(cx-hw,cy);
+    ctx.bezierCurveTo(cx-hw*.25,cy-topH*1.15, cx+hw*.25,cy-topH*1.15, cx+hw,cy);
+    ctx.lineTo(cx+hw+2,cy-topH*1.5); ctx.lineTo(cx-hw-2,cy-topH*1.5);
+    ctx.closePath(); ctx.fillStyle=ulg; ctx.fill();
+    ctx.restore();
+
+    // lower lid
+    ctx.save();
+    const llg = ctx.createLinearGradient(cx,cy, cx,cy+botH*.95);
+    llg.addColorStop(0,'rgba(15,2,2,0)');
+    llg.addColorStop(.5, `rgba(6,0,0,${lidAlpha*.5})`);
+    llg.addColorStop(1,  `rgba(3,0,0,${lidAlpha*.9})`);
+    ctx.beginPath();
+    ctx.moveTo(cx-hw,cy);
+    ctx.bezierCurveTo(cx-hw*.25,cy+botH*.9, cx+hw*.25,cy+botH*.9, cx+hw,cy);
+    ctx.lineTo(cx+hw+2,cy+botH*1.3); ctx.lineTo(cx-hw-2,cy+botH*1.3);
+    ctx.closePath(); ctx.fillStyle=llg; ctx.fill();
+    ctx.restore();
+
+    // lid edge crease lines
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(cx-hw,cy);
+    ctx.bezierCurveTo(cx-hw*.25,cy-topH*1.15, cx+hw*.25,cy-topH*1.15, cx+hw,cy);
+    ctx.strokeStyle='rgba(80,10,10,.75)'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-hw,cy);
+    ctx.bezierCurveTo(cx-hw*.25,cy+botH*.9, cx+hw*.25,cy+botH*.9, cx+hw,cy);
+    ctx.strokeStyle='rgba(60,8,8,.55)'; ctx.lineWidth=1.8; ctx.stroke();
+    ctx.restore();
+
+    // red glow leak around the eye opening
+    if (openness>.1) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(1,(openness-.1)/.5) * .45;
+      ctx.shadowColor='#dd0000'; ctx.shadowBlur=25;
+      ctx.beginPath(); ctx.moveTo(cx-hw,cy);
+      ctx.bezierCurveTo(cx-hw*.25,cy-topH*1.15, cx+hw*.25,cy-topH*1.15, cx+hw,cy);
+      ctx.bezierCurveTo(cx+hw*.25,cy+botH*.9, cx-hw*.25,cy+botH*.9, cx-hw,cy);
+      ctx.closePath();
+      ctx.strokeStyle='rgba(200,0,0,.5)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  //  Helper: compute eye positions for a given W/H
+  // ─────────────────────────────────────────────
+  function eyePositions(W, H) {
+    const cy   = H * .5;
+    const eyeW = Math.min(W * .30, 300);
+    const gap  = eyeW * .30;
+    const lx   = W/2 - eyeW/2 - gap/2;
+    const rx   = W/2 + eyeW/2 + gap/2;
+    return {cy, eyeW, lx, rx};
+  }
+
+  // ─────────────────────────────────────────────
+  //  BACKGROUND canvas — always fixed, z:4
+  // ─────────────────────────────────────────────
+  const bgC = document.createElement('canvas');
+  bgC.id = 'eye-bg-canvas';
+  bgC.style.cssText = 'position:fixed;inset:0;z-index:4;pointer-events:none;';
+  document.body.appendChild(bgC);
+  const bgCtx = bgC.getContext('2d');
+  let BW, BH;
+  function resizeBg(){ BW=bgC.width=window.innerWidth; BH=bgC.height=window.innerHeight; }
+  resizeBg(); window.addEventListener('resize', resizeBg);
+
+  // Shared animation state for background loop
+  let bgPhase    = 'closed';  // closed|opening|hold|closing
+  let bgOpen     = 0;         // 0–1 openness
+  let bgSpin     = 0;
+  let bgHoldMs   = 0;
+  let bgPauseMs  = 0;
+  let bgPauseNeed= 400;       // first open fires quickly
+  let bgGlobalAlpha = 1;      // driven by intro fade
+  let bgLidAlpha    = 1;      // 1 during intro, fades to ~0.55 after
+  let bgLast     = 0;
+
+  function bgLoop(ts) {
+    const dt = Math.min(ts - bgLast, 50); bgLast = ts;
+    bgSpin += dt * .00032;
+
+    if (bgPhase === 'closed') {
+      bgPauseMs += dt;
+      bgOpen = Math.max(0, bgOpen - dt/350);
+      if (bgPauseMs >= bgPauseNeed) { bgPhase='opening'; bgPauseMs=0; }
+    } else if (bgPhase === 'opening') {
+      bgOpen += dt/1400; bgSpin += dt*.0008;
+      if (bgOpen >= 1) { bgOpen=1; bgPhase='hold'; bgHoldMs=0; }
+    } else if (bgPhase === 'hold') {
+      bgHoldMs += dt; bgSpin += dt*.0004;
+      if (bgHoldMs > 2500) bgPhase = 'closing';
+    } else if (bgPhase === 'closing') {
+      bgOpen -= dt/1000; bgSpin += dt*.0006;
+      if (bgOpen <= 0) {
+        bgOpen=0; bgPhase='closed'; bgPauseMs=0;
+        bgPauseNeed = 2000 + Math.random()*4000;
+      }
+    }
+
+    const op = eio(Math.max(0, Math.min(1, bgOpen)));
+    const {cy, eyeW, lx, rx} = eyePositions(BW, BH);
+
+    bgCtx.clearRect(0,0,BW,BH);
+    bgCtx.globalAlpha = bgGlobalAlpha;
+    drawEye(bgCtx, BW, BH, lx, cy, eyeW, op, bgSpin, bgLidAlpha);
+    drawEye(bgCtx, BW, BH, rx, cy, eyeW, op, bgSpin, bgLidAlpha);
+
+    // subtle red screen pulse when holding
+    if (bgPhase === 'hold') {
+      const p = .5 + .5*Math.sin(bgHoldMs*.003);
+      bgCtx.globalAlpha = bgGlobalAlpha * .05 * p;
+      bgCtx.fillStyle='#cc0000';
+      bgCtx.fillRect(0,0,BW,BH);
+    }
+    bgCtx.globalAlpha = 1;
+    requestAnimationFrame(bgLoop);
+  }
+  bgLast = performance.now();
+  requestAnimationFrame(bgLoop);
+
+  // ─────────────────────────────────────────────
+  //  INTRO overlay — full-screen, blocks interaction
+  //  Plays once on load, then fades revealing bg canvas
+  // ─────────────────────────────────────────────
+  const intro = document.createElement('div');
+  intro.style.cssText = 'position:fixed;inset:0;z-index:99990;pointer-events:all;background:#010000;transition:opacity .8s ease;';
+  document.body.appendChild(intro);
+
+  const iC = document.createElement('canvas');
+  iC.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+  intro.appendChild(iC);
+  const iCtx = iC.getContext('2d');
+  let IW, IH;
+  function resizeI(){ IW=iC.width=window.innerWidth; IH=iC.height=window.innerHeight; }
+  resizeI(); window.addEventListener('resize', resizeI);
+
+  let iState = 'opening';
+  let iOpen  = 0;
+  let iSpin  = 0;
+  let iHold  = 0;
+  let iLast  = 0;
+
+  function introLoop(ts) {
+    const dt = Math.min(ts - iLast, 50); iLast = ts;
+    iSpin += dt * .0012;
+
+    if (iState === 'opening') {
+      iOpen += dt/1500;
+      if (iOpen >= 1) { iOpen=1; iState='hold'; iHold=0; }
+    } else if (iState === 'hold') {
+      iHold += dt; iSpin += dt*.0004;
+      if (iHold > 2600) iState = 'closing';
+    } else if (iState === 'closing') {
+      iOpen -= dt/950; iSpin += dt*.0008;
+      if (iOpen <= 0) {
+        iOpen = 0; iState = 'done';
+      }
+    } else if (iState === 'done') {
+      // Fade out intro overlay — bg canvas is already running underneath
+      intro.style.opacity = '0';
+      intro.style.pointerEvents = 'none';
+      // Smoothly reduce bgLidAlpha so lids look less heavy in bg mode
+      let t0 = performance.now();
+      (function fadeLids(now){
+        const p = Math.min(1,(now-t0)/1200);
+        bgLidAlpha = 1 - p*.45;  // 1 → 0.55
+        if (p<1) requestAnimationFrame(fadeLids);
+      })(t0);
+      setTimeout(()=>{ try{document.body.removeChild(intro);}catch(e){} }, 900);
+      return; // stop intro loop
+    }
+
+    const op = eio(Math.max(0, Math.min(1, iOpen)));
+    const {cy, eyeW, lx, rx} = eyePositions(IW, IH);
+
+    iCtx.clearRect(0,0,IW,IH);
+
+    // solid black bg for intro
+    iCtx.fillStyle = '#010000';
+    iCtx.fillRect(0,0,IW,IH);
+
+    // black strips beside and between the eyes
+    const hw = eyeW*.5, gap = eyeW*.30;
+    iCtx.fillStyle='#010000';
+    iCtx.fillRect(0,   0, lx-hw-1,  IH);
+    iCtx.fillRect(rx+hw+1, 0, IW, IH);
+    iCtx.fillRect(lx+hw, cy-eyeW*.38, gap+1, eyeW*.76);
+
+    drawEye(iCtx, IW, IH, lx, cy, eyeW, op, iSpin, 1);
+    drawEye(iCtx, IW, IH, rx, cy, eyeW, op, iSpin, 1);
+
+    // red pulse when holding
+    if (iState === 'hold') {
+      const p = .5+.5*Math.sin(iHold*.003);
+      iCtx.fillStyle=`rgba(150,0,0,${.07*p})`;
+      iCtx.fillRect(0,0,IW,IH);
+    }
+
+    requestAnimationFrame(introLoop);
+  }
+  iLast = performance.now();
+  requestAnimationFrame(introLoop);
+
+})();
+
+
+
+// Page load ambient crow burst
+setTimeout(() => {
+  // subtle fade in handled by CSS animations
+}, 100);
+</script>
+</body>
+</html>
