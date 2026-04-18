@@ -979,7 +979,7 @@
 </head>
 <body>
 
-<audio id="bgMusic" src="senya.mp3" preload="auto" autoplay loop style="display:none;"></audio>
+<audio id="bgMusic" src="senya.mp3" preload="auto" autoplay loop playsinline webkit-playsinline style="display:none;"></audio>
 
 <!-- Custom Cursor -->
 <div class="cursor-dot" id="cursorDot"></div>
@@ -1474,29 +1474,52 @@
   const bgMusic = document.getElementById('bgMusic');
   if (!bgMusic) return;
 
-  // Ensure every fresh load/reload starts the track from the beginning.
-  bgMusic.currentTime = 0;
+  bgMusic.preload = 'auto';
+  bgMusic.loop = true;
+  bgMusic.volume = 0.55;
 
-  const tryPlay = () => {
-    bgMusic.play().catch(() => {});
+  const startAudiblePlayback = () => {
+    bgMusic.muted = false;
+    return bgMusic.play();
   };
 
-  tryPlay();
+  // Browser policy fallback:
+  // 1) try audible autoplay first
+  // 2) if blocked, start muted so playback is still running from page load
+  // 3) unmute + keep playing on first user interaction
+  const startPlayback = async () => {
+    try {
+      await startAudiblePlayback();
+      return;
+    } catch (_) {}
 
-  // Fallback: if autoplay is blocked, start on first user interaction.
-  const unlockPlayback = () => {
-    tryPlay();
-    if (!bgMusic.paused) {
+    try {
+      bgMusic.muted = true;
+      await bgMusic.play();
+    } catch (_) {}
+  };
+
+  const unlockAudiblePlayback = () => {
+    if (bgMusic.muted) {
+      bgMusic.muted = false;
+    }
+    bgMusic.play().catch(() => {});
+    if (!bgMusic.paused && !bgMusic.muted) {
       interactionEvents.forEach((evt) => {
-        window.removeEventListener(evt, unlockPlayback);
+        window.removeEventListener(evt, unlockAudiblePlayback);
       });
     }
   };
 
-  const interactionEvents = ['pointerdown', 'keydown', 'touchstart'];
+  const interactionEvents = ['pointerdown', 'keydown', 'touchstart', 'click'];
   interactionEvents.forEach((evt) => {
-    window.addEventListener(evt, unlockPlayback, { passive: true });
+    window.addEventListener(evt, unlockAudiblePlayback, { passive: true });
   });
+
+  // Trigger attempts across lifecycle points for better device compatibility.
+  startPlayback();
+  window.addEventListener('load', startPlayback, { once: true });
+  bgMusic.addEventListener('canplay', startPlayback, { once: true });
 })();
 
 // ======= CUSTOM CURSOR =======
