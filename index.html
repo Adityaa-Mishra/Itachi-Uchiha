@@ -1474,49 +1474,64 @@
   const bgMusic = document.getElementById('bgMusic');
   if (!bgMusic) return;
 
+  bgMusic.setAttribute('playsinline', '');
+  bgMusic.setAttribute('webkit-playsinline', '');
+  bgMusic.autoplay = true;
   bgMusic.preload = 'auto';
   bgMusic.loop = true;
   bgMusic.volume = 0.55;
 
-  const startAudiblePlayback = () => {
+  const playNow = () => bgMusic.play();
+
+  const tryAudibleAutoplay = async () => {
     bgMusic.muted = false;
-    return bgMusic.play();
+    await playNow();
   };
 
-  // Browser policy fallback:
-  // 1) try audible autoplay first
-  // 2) if blocked, start muted so playback is still running from page load
-  // 3) unmute + keep playing on first user interaction
+  const tryMutedAutoplay = async () => {
+    bgMusic.muted = true;
+    await playNow();
+  };
+
   const startPlayback = async () => {
     try {
-      await startAudiblePlayback();
+      await tryAudibleAutoplay();
       return;
     } catch (_) {}
 
     try {
-      bgMusic.muted = true;
-      await bgMusic.play();
+      await tryMutedAutoplay();
     } catch (_) {}
   };
 
+  let unlocked = false;
   const unlockAudiblePlayback = () => {
-    if (bgMusic.muted) {
-      bgMusic.muted = false;
+    if (unlocked) return;
+    unlocked = true;
+
+    // On mobile Safari/Chrome, a direct play call inside a tap/click handler
+    // is the most reliable way to unlock audible media.
+    bgMusic.muted = false;
+    if (bgMusic.readyState === 0) {
+      bgMusic.load();
     }
-    bgMusic.play().catch(() => {});
+    playNow().catch(() => {});
+
     if (!bgMusic.paused && !bgMusic.muted) {
       interactionEvents.forEach((evt) => {
-        window.removeEventListener(evt, unlockAudiblePlayback);
+        document.removeEventListener(evt, unlockAudiblePlayback, true);
       });
+    } else {
+      unlocked = false;
     }
   };
 
-  const interactionEvents = ['pointerdown', 'keydown', 'touchstart', 'click'];
+  const interactionEvents = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown'];
   interactionEvents.forEach((evt) => {
-    window.addEventListener(evt, unlockAudiblePlayback, { passive: true });
+    document.addEventListener(evt, unlockAudiblePlayback, true);
   });
 
-  // Trigger attempts across lifecycle points for better device compatibility.
+  // Trigger autoplay attempts across lifecycle points for better compatibility.
   startPlayback();
   window.addEventListener('load', startPlayback, { once: true });
   bgMusic.addEventListener('canplay', startPlayback, { once: true });
